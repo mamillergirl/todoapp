@@ -1,24 +1,63 @@
-# README
+Sure, here's a basic README.md file with instructions on how to run your Ruby on Rails Todo List application locally:
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+```markdown
+# Todo List Application
 
-Things you may want to cover:
+This is a simple Todo List application built with Ruby on Rails.
 
-* Ruby version
+## Prerequisites
 
-* System dependencies
+Before running the application locally, make sure you have the following installed:
 
-* Configuration
+- Ruby (version 3.3.0 or higher)
+- Rails (version 7.1.3.2 or higher)
+- SQLite (or any other supported database)
 
-* Database creation
+## Installation
 
-* Database initialization
+1. Clone the repository:
 
-* How to run the test suite
+   ```bash
+   git clone <repository_url>
+   ```
 
-* Services (job queues, cache servers, search engines, etc.)
+2. Navigate to the project directory:
 
-* Deployment instructions
+   ```bash
+   cd todo-list-application
+   ```
 
-* ...
+3. Install dependencies:
+
+   ```bash
+   bundle install
+   ```
+
+4. Set up the database:
+
+   ```bash
+   rails db:create
+   rails db:migrate
+   ```
+
+## Running the Application
+
+To run the application locally, use the following command:
+
+```bash
+rails server
+```
+
+This will start the server locally, and you can access the application at http://localhost:3000 in your web browser.
+
+## Usage
+
+Once the application is running, you can:
+
+- View the list of tasks
+- Add new tasks
+- Edit existing tasks
+- Delete tasks
+- Mark tasks as completed
+- Sort Tasks
+
