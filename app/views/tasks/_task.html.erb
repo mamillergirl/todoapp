@@ -1,0 +1,23 @@
+<div class="task p-4 border rounded-xl" data-task-id="<%= task.id %>">
+    <h2 class="text-lg font-semibold"><%= task.name %></h2>
+    <p class="text-sm text-gray-600"><%= task.description %></p>
+    <p class="text-sm text-gray-600">
+        <% if task.due_date.present? %>
+            <span class="font-semibold">Due:</span> <%= task.due_date.strftime("%b %d, %Y") %>
+        <% else %>
+        <% end %>
+    </p>
+ 
+    <label class="checkbox inline-flex items-center">
+        <input type="checkbox" class="edit-checkbox form-checkbox h-5 w-5 text-green-500 edit-checkbox" data-task-id="<%= task.id %>" <%= task.completed ? 'checked' : '' %>>
+
+        <span class="ml-2 text-gray-700">Completed</span>
+        
+    </label>
+    <div class="buttons">
+    <button class="text-sm">
+      <%= link_to "Edit This Task", edit_task_path(task) %>
+    </button>
+    <%= button_to "Delete", task, method: :delete, data: { confirm: "Are you sure?" }, class: "text-sm" %>
+  </div>
+</div>

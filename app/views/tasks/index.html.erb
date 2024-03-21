@@ -1,0 +1,109 @@
+<div class="main-tasks p-4">
+<div class="top-menu">
+  <div class="top flex w-full justify-between">
+    <h1 class="text-3xl font-bold">To Do List</h1>
+    <button id="new-task-btn">Add Task +</button>
+  </div>
+
+  <div class="mb-4 w-full">
+    <label class="text-xl" for="sort">Sort by:</label>
+    <select name="sort" id="sort">
+      <option value="default">Recently Added</option>
+      <option value="asc">Date Ascending</option>
+      <option value="desc">Date Descending</option>
+    </select>
+  </div>
+
+  <div class="new-task-form" style="display: none;">
+    <%= form_with(model: Task.new, id: "new-task-form", html: { novalidate: true }) do |form| %>
+      <% if Task.new.errors.any? %>
+        <div style="color: red">
+          <h2><%= pluralize(Task.new.errors.count, "error") %> prohibited this task from being saved:</h2>
+          <ul>
+            <% Task.new.errors.full_messages.each do |error_message| %>
+              <li><%= error_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :name, style: "display: block" %>
+        <%= form.text_field :name, required: true %>
+      </div>
+
+      <div>
+        <%= form.label :description, style: "display: block" %>
+        <%= form.text_area :description, required: true %>
+      </div>
+
+      <div>
+        <%= form.label :due_date, style: "display: block" %>
+        <%= form.date_field :due_date, required: true %>
+      </div>
+
+      <button type="submit">Submit</button>
+    <% end %>
+  </div>
+</div>  
+
+  <div class="m-auto" id="tasks">
+    <%= render @tasks %>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const newTaskBtn = document.getElementById("new-task-btn");
+    const newTaskForm = document.querySelector(".new-task-form");
+
+    newTaskBtn.addEventListener("click", function() {
+      newTaskForm.style.display = newTaskForm.style.display === "none" ? "block" : "none";
+    });
+
+    document.getElementById("sort").addEventListener("change", function() {
+      const selectedSort = this.value;
+      fetch(`/tasks?sort=${selectedSort}`)
+        .then(response => response.text())
+        .then(data => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, "text/html");
+          const tasksContainer = doc.getElementById("tasks");
+          document.getElementById("tasks").innerHTML = tasksContainer.innerHTML;
+
+          // Add event delegation for checkboxes
+          document.getElementById("tasks").addEventListener('change', function(event) {
+            const target = event.target;
+            if (target.classList.contains('edit-checkbox')) {
+              const taskId = target.dataset.taskId;
+              const completed = target.checked;
+
+              fetch(`/tasks/${taskId}`, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ task: { completed: completed } })
+              })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(data => {
+                console.log(data); // Log the response for debugging
+                // Optionally, you can handle the response here, e.g., update UI
+              })
+              .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+              });
+            }
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    });
+  });
+</script>
+
